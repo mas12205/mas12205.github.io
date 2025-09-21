@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sam Coil Docena - Portfolio</title>
+  <!-- React + ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <!-- Babel (for JSX support in the browser) -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- Simple Tailwind CDN for styling -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    function App() {
+      const [activeSection, setActiveSection] = useState("home");
+
+      const profileInfo = {
+        name: "Sam Coil L. Docena",
+        title: "Web Developer | Designer | Tech Enthusiast",
+        description:
+          "I am a passionate web developer skilled in building modern web applications using JavaScript, React, and Node.js. I love creating clean, responsive, and user-friendly websites.",
+      };
+
+      return (
+        <div>
+          {/* Navbar */}
+          <nav className="flex justify-between items-center bg-white shadow p-4 sticky top-0">
+            <h1 className="text-xl font-bold text-blue-600">{profileInfo.name}</h1>
+            <div className="flex gap-6">
+              <button onClick={() => setActiveSection("home")} className="hover:text-blue-600">Home</button>
+              <button onClick={() => setActiveSection("about")} className="hover:text-blue-600">About</button>
+              <button onClick={() => setActiveSection("projects")} className="hover:text-blue-600">Projects</button>
+              <button onClick={() => setActiveSection("contact")} className="hover:text-blue-600">Contact</button>
+            </div>
+          </nav>
+
+          {/* Sections */}
+          <main className="p-8 max-w-4xl mx-auto">
+            {activeSection === "home" && (
+              <section className="text-center mt-20">
+                <h2 className="text-4xl font-bold mb-4">Hi, I’m {profileInfo.name}</h2>
+                <p className="text-lg text-gray-600">{profileInfo.title}</p>
+              </section>
+            )}
+
+            {activeSection === "about" && (
+              <section className="mt-20">
+                <h2 className="text-3xl font-bold mb-4">About Me</h2>
+                <p className="text-gray-600">{profileInfo.description}</p>
+              </section>
+            )}
+
+            {activeSection === "projects" && (
+              <section className="mt-20">
+                <h2 className="text-3xl font-bold mb-6">Projects</h2>
+                <ul className="list-disc list-inside text-gray-600">
+                  <li>Portfolio Website - Built with React and TailwindCSS</li>
+                  <li>E-commerce Store - Full-stack MERN app with cart & payment</li>
+                  <li>Blog Platform - User authentication and CMS features</li>
+                </ul>
+              </section>
+            )}
+
+            {activeSection === "contact" && (
+              <section className="mt-20 text-center">
+                <h2 className="text-3xl font-bold mb-4">Contact Me</h2>
+                <p className="text-gray-600 mb-6">Let’s build something great together!</p>
+                <div className="flex justify-center gap-6">
+                  <a href="mailto:youremail@example.com" className="text-blue-600 hover:underline">Email</a>
+                  <a href="#" className="text-blue-600 hover:underline">LinkedIn</a>
+                  <a href="#" className="text-blue-600 hover:underline">GitHub</a>
+                </div>
+              </section>
+            )}
+          </main>
+
+          {/* Footer */}
+          <footer className="text-center py-6 text-gray-500 text-sm bg-white mt-20 shadow-inner">
+            © {new Date().getFullYear()} {profileInfo.name}. All rights reserved.
+          </footer>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>
