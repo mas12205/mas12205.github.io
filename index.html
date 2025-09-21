@@ -81,12 +81,14 @@
       const [menuOpen, setMenuOpen] = useState(false);
 
       const profileInfo = {
-        name: "Sam Docena",
-        title: "Web Developer | Designer | Tech Enthusiast",
+        name: "Sam Coil Docena",
+        title: "BSIT Student | Web Developer | Designer",
         description:
-          "I am a passionate web developer skilled in building modern web applications using JavaScript, React, and TailwindCSS. I love creating clean, responsive, and user-friendly websites.",
+          "I am a BSIT student passionate about web development, specializing in modern tools like JavaScript, React, and TailwindCSS. I enjoy creating responsive, clean, and user-friendly designs.",
         education: "Caraga State University (BSIT)",
         funFact: "I always smile 😁 and love playing online games 🎮.",
+        email: "dsamcoil@gmail.com",  // update with your real email
+        phone: "09951844595"             // update with your real number
       };
 
       const skills = [
@@ -115,9 +117,9 @@
           github: "https://github.com/mas12205"
         },
         {
-          title: "Blog Platform",
+          title: "Apple Website Developer",
           img: "./proj3.jpg",
-          desc: "A blogging platform with authentication & CMS.",
+          desc: "One of the biggest tech brand in the world.",
           tech: "Node.js, MongoDB, Express",
           demo: "https://your-demo-link.com",
           github: "https://github.com/mas12205"
@@ -173,6 +175,7 @@
                 </div>
                 <h2 className="text-4xl font-bold mb-2 text-white">Hi, I’m {profileInfo.name}</h2>
                 <p className="text-lg text-gray-300">{profileInfo.title}</p>
+                <p className="text-sm text-gray-400 mt-2">{profileInfo.education}</p>
 
                 {/* CTA Buttons */}
                 <div className="flex justify-center gap-6 mt-6">
@@ -199,7 +202,9 @@
                   <p className="text-gray-300 leading-relaxed text-center md:text-left">
                     {profileInfo.description} <br /><br />
                     <span className="font-semibold text-orange-400">Education:</span> {profileInfo.education} <br />
-                    <span className="font-semibold text-orange-400">Fun Fact:</span> {profileInfo.funFact}
+                    <span className="font-semibold text-orange-400">Fun Fact:</span> {profileInfo.funFact} <br />
+                    <span className="font-semibold text-orange-400">Email:</span> {profileInfo.email} <br />
+                    <span className="font-semibold text-orange-400">Phone:</span> {profileInfo.phone}
                   </p>
                 </div>
               </section>
@@ -237,7 +242,7 @@
                       className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:scale-110 transform transition cursor-pointer"
                       onClick={() => setModalProject(proj)}
                     >
-                      <img src={proj.img} alt={`Screenshot of ${proj.title}`} className="w-full h-40 object-cover" />
+                      <img src={proj.img} alt={`Screenshot of {proj.title}`} className="w-full h-40 object-cover" />
                       <div className="p-4 text-left">
                         <h3 className="text-lg font-semibold text-white">{proj.title}</h3>
                         <p className="text-gray-400 text-sm">{proj.desc}</p>
@@ -253,6 +258,8 @@
               <section className="mt-20 text-center fadeIn">
                 <h2 className="text-3xl font-bold mb-4 text-white">Contact Me</h2>
                 <p className="text-gray-400 mb-6">Let’s build something great together!</p>
+                <p className="text-gray-300 mb-2">📧 {profileInfo.email}</p>
+                <p className="text-gray-300 mb-6">📱 {profileInfo.phone}</p>
                 <div className="flex flex-col sm:flex-row justify-center gap-6 items-center">
                   <a href="https://www.instagram.com/samcoildocena/" target="_blank" rel="noopener noreferrer"
                      className="px-6 py-3 bg-gray-800 rounded-lg text-gray-200 flex items-center justify-center gap-2 hover:bg-pink-600 hover:scale-110 transform transition w-44">
@@ -344,7 +351,7 @@
         if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
       }
       draw() {
-        ctx.fillStyle = "rgba(255,140,0,0.7)";
+        ctx.fillStyle = "rgba(255,255,255,0.7)";
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fill();
@@ -353,10 +360,11 @@
 
     function init() {
       particlesArray = [];
-      for (let i = 0; i < 50; i++) {
-        const size = Math.random() * 3 + 1;
-        const x = Math.random() * canvas.width;
-        const y = Math.random() * canvas.height;
+      let numberOfParticles = (canvas.width * canvas.height) / 9000;
+      for (let i = 0; i < numberOfParticles; i++) {
+        const size = Math.random() * 2 + 1;
+        const x = Math.random() * (canvas.width - size * 2);
+        const y = Math.random() * (canvas.height - size * 2);
         const speedX = (Math.random() - 0.5) * 1;
         const speedY = (Math.random() - 0.5) * 1;
         particlesArray.push(new Particle(x, y, size, speedX, speedY));
