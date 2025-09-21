@@ -4,15 +4,70 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sam Coil Docena - Portfolio</title>
+
+  <!-- SEO -->
+  <meta name="description" content="Sam Docena - Web Developer Portfolio showcasing skills, projects, and contact details.">
+  <meta name="keywords" content="Web Developer, Portfolio, JavaScript, HTML, CSS, React, Node.js, TailwindCSS">
+  <meta name="author" content="Sam Coil Docena">
+  <link rel="icon" href="./2x2.jpg" type="image/png" />
+
   <!-- React + ReactDOM -->
   <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-  <!-- Babel (for JSX support in the browser) -->
+  <!-- Babel -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <!-- Simple Tailwind CDN for styling -->
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* Fade In */
+    .fadeIn { animation: fadeIn 1s ease-in-out; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-bg { background: rgba(0,0,0,0.7); }
+
+    /* Animated Gradient Background */
+    body {
+      background: linear-gradient(270deg, #000000, #1a1a1a, #ff5500, #000000);
+      background-size: 600% 600%;
+      animation: gradientShift 20s ease infinite;
+      overflow: hidden;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Floating Particles Layer */
+    #bgCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Make content above animations */
+    #root {
+      position: relative;
+      z-index: 10;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+  </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="text-white">
+  <!-- Background Canvas -->
+  <canvas id="bgCanvas"></canvas>
+
   <div id="root"></div>
 
   <script type="text/babel">
@@ -20,69 +75,238 @@
 
     function App() {
       const [activeSection, setActiveSection] = useState("home");
+      const [activeSkill, setActiveSkill] = useState(null);
+      const [showResume, setShowResume] = useState(false);
+      const [modalProject, setModalProject] = useState(null);
+      const [menuOpen, setMenuOpen] = useState(false);
 
       const profileInfo = {
-        name: "Sam Coil L. Docena",
+        name: "Sam Docena",
         title: "Web Developer | Designer | Tech Enthusiast",
         description:
-          "I am a passionate web developer skilled in building modern web applications using JavaScript, React, and Node.js. I love creating clean, responsive, and user-friendly websites.",
+          "I am a passionate web developer skilled in building modern web applications using JavaScript, React, and TailwindCSS. I love creating clean, responsive, and user-friendly websites.",
+        education: "Caraga State University (BSIT)",
+        funFact: "I always smile 😁 and love playing online games 🎮.",
       };
 
+      const skills = [
+        { name: "JavaScript", desc: "Dynamic scripting for interactive websites.", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" },
+        { name: "HTML", desc: "Markup language for structuring web content.", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" },
+        { name: "CSS", desc: "Styling language for website design.", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" },
+        { name: "React", desc: "Library for building modern user interfaces.", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" },
+        { name: "Node.js", desc: "Runtime for backend applications.", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" },
+      ];
+
+      const projects = [
+        {
+          title: "Portfolio Website",
+          img: "./proj1.jpg",
+          desc: "A personal portfolio showcasing my skills and projects.",
+          tech: "React, TailwindCSS",
+          demo: "https://your-demo-link.com",
+          github: "https://github.com/mas12205"
+        },
+        {
+          title: "Gaming Website",
+          img: "./proj2.jpg",
+          desc: "A website for gamers with news and leaderboards.",
+          tech: "HTML, CSS",
+          demo: "https://your-demo-link.com",
+          github: "https://github.com/mas12205"
+        },
+        {
+          title: "Blog Platform",
+          img: "./proj3.jpg",
+          desc: "A blogging platform with authentication & CMS.",
+          tech: "Node.js, MongoDB, Express",
+          demo: "https://your-demo-link.com",
+          github: "https://github.com/mas12205"
+        }
+      ];
+
       return (
-        <div>
+        <div className="min-h-screen flex flex-col relative">
           {/* Navbar */}
-          <nav className="flex justify-between items-center bg-white shadow p-4 sticky top-0">
-            <h1 className="text-xl font-bold text-blue-600">{profileInfo.name}</h1>
-            <div className="flex gap-6">
-              <button onClick={() => setActiveSection("home")} className="hover:text-blue-600">Home</button>
-              <button onClick={() => setActiveSection("about")} className="hover:text-blue-600">About</button>
-              <button onClick={() => setActiveSection("projects")} className="hover:text-blue-600">Projects</button>
-              <button onClick={() => setActiveSection("contact")} className="hover:text-blue-600">Contact</button>
+          <nav className="flex justify-between items-center bg-black/70 backdrop-blur shadow p-4 sticky top-0 z-20">
+            <h1 className="text-xl font-bold text-gray-100">{profileInfo.name}</h1>
+            <div className="hidden md:flex gap-6">
+              {["home","about","skills","projects","contact"].map(section => (
+                <button 
+                  key={section}
+                  onClick={() => setActiveSection(section)} 
+                  className={`capitalize hover:text-white transition ${
+                    activeSection === section ? "text-white font-semibold border-b-2 border-orange-500" : "text-gray-400"
+                  }`}
+                >
+                  {section}
+                </button>
+              ))}
             </div>
+            {/* Mobile Hamburger */}
+            <button className="md:hidden text-white" onClick={() => setMenuOpen(!menuOpen)}>
+              ☰
+            </button>
+            {menuOpen && (
+              <div className="absolute top-16 right-4 bg-gray-900 rounded-lg shadow-lg flex flex-col p-4 space-y-2 md:hidden">
+                {["home","about","skills","projects","contact"].map(section => (
+                  <button 
+                    key={section}
+                    onClick={() => { setActiveSection(section); setMenuOpen(false); }}
+                    className={`capitalize text-left ${
+                      activeSection === section ? "text-orange-400 font-semibold" : "text-gray-300"
+                    }`}
+                  >
+                    {section}
+                  </button>
+                ))}
+              </div>
+            )}
           </nav>
 
           {/* Sections */}
-          <main className="p-8 max-w-4xl mx-auto">
+          <main className="p-8 max-w-5xl mx-auto flex-grow relative z-10">
+            {/* Home */}
             {activeSection === "home" && (
-              <section className="text-center mt-20">
-                <h2 className="text-4xl font-bold mb-4">Hi, I’m {profileInfo.name}</h2>
-                <p className="text-lg text-gray-600">{profileInfo.title}</p>
+              <section className="text-center mt-20 fadeIn">
+                <div className="w-48 h-48 mx-auto mb-6 rounded-full overflow-hidden shadow-lg border-4 border-gray-700 hover:scale-105 transform transition">
+                  <img src="./2x2.jpg" alt="Portrait of Sam Docena" className="w-full h-full object-cover" />
+                </div>
+                <h2 className="text-4xl font-bold mb-2 text-white">Hi, I’m {profileInfo.name}</h2>
+                <p className="text-lg text-gray-300">{profileInfo.title}</p>
+
+                {/* CTA Buttons */}
+                <div className="flex justify-center gap-6 mt-6">
+                  <button onClick={() => setShowResume(true)}
+                     className="px-6 py-3 bg-orange-500 rounded-lg text-white hover:bg-orange-600 hover:scale-110 transform transition">
+                    📄 View Resume
+                  </button>
+                  <button onClick={() => setActiveSection("contact")} 
+                     className="px-6 py-3 bg-gray-800 rounded-lg text-gray-200 hover:bg-blue-600 hover:scale-110 transform transition">
+                    ✉️ Contact Me
+                  </button>
+                </div>
               </section>
             )}
 
+            {/* About */}
             {activeSection === "about" && (
-              <section className="mt-20">
-                <h2 className="text-3xl font-bold mb-4">About Me</h2>
-                <p className="text-gray-600">{profileInfo.description}</p>
+              <section className="mt-20 fadeIn text-center">
+                <h2 className="text-3xl font-bold mb-6 text-white">About Me</h2>
+                <div className="flex flex-col md:flex-row items-center md:items-start gap-8 max-w-3xl mx-auto">
+                  <div className="w-56 h-56 rounded-full overflow-hidden shadow-lg border-4 border-gray-700 flex-shrink-0">
+                    <img src="./2x2.jpg" alt="Sam Docena smiling portrait" className="w-full h-full object-cover" />
+                  </div>
+                  <p className="text-gray-300 leading-relaxed text-center md:text-left">
+                    {profileInfo.description} <br /><br />
+                    <span className="font-semibold text-orange-400">Education:</span> {profileInfo.education} <br />
+                    <span className="font-semibold text-orange-400">Fun Fact:</span> {profileInfo.funFact}
+                  </p>
+                </div>
               </section>
             )}
 
+            {/* Skills */}
+            {activeSection === "skills" && (
+              <section className="mt-20 text-center fadeIn">
+                <h2 className="text-3xl font-bold mb-6 text-white">Skills</h2>
+                <div className="flex justify-center flex-wrap gap-6">
+                  {skills.map((skill, i) => (
+                    <div 
+                      key={i}
+                      className="p-4 bg-gray-800 rounded-lg cursor-pointer hover:shadow-lg hover:shadow-orange-500/50 hover:scale-105 transform transition w-40"
+                      onClick={() => setActiveSkill(activeSkill === i ? null : i)}
+                    >
+                      <img src={skill.icon} alt={`${skill.name} icon`} className="w-10 h-10 mx-auto mb-2" />
+                      <h3 className="text-lg font-semibold">{skill.name}</h3>
+                      {activeSkill === i && (
+                        <p className="text-gray-400 text-sm mt-2">{skill.desc}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Projects */}
             {activeSection === "projects" && (
-              <section className="mt-20">
-                <h2 className="text-3xl font-bold mb-6">Projects</h2>
-                <ul className="list-disc list-inside text-gray-600">
-                  <li>Portfolio Website - Built with React and TailwindCSS</li>
-                  <li>E-commerce Store - Full-stack MERN app with cart & payment</li>
-                  <li>Blog Platform - User authentication and CMS features</li>
-                </ul>
+              <section className="mt-20 text-center fadeIn">
+                <h2 className="text-3xl font-bold mb-6 text-white">Projects</h2>
+                <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                  {projects.map((proj, i) => (
+                    <div key={i} 
+                      className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:scale-110 transform transition cursor-pointer"
+                      onClick={() => setModalProject(proj)}
+                    >
+                      <img src={proj.img} alt={`Screenshot of ${proj.title}`} className="w-full h-40 object-cover" />
+                      <div className="p-4 text-left">
+                        <h3 className="text-lg font-semibold text-white">{proj.title}</h3>
+                        <p className="text-gray-400 text-sm">{proj.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </section>
             )}
 
+            {/* Contact */}
             {activeSection === "contact" && (
-              <section className="mt-20 text-center">
-                <h2 className="text-3xl font-bold mb-4">Contact Me</h2>
-                <p className="text-gray-600 mb-6">Let’s build something great together!</p>
-                <div className="flex justify-center gap-6">
-                  <a href="mailto:youremail@example.com" className="text-blue-600 hover:underline">Email</a>
-                  <a href="#" className="text-blue-600 hover:underline">LinkedIn</a>
-                  <a href="#" className="text-blue-600 hover:underline">GitHub</a>
+              <section className="mt-20 text-center fadeIn">
+                <h2 className="text-3xl font-bold mb-4 text-white">Contact Me</h2>
+                <p className="text-gray-400 mb-6">Let’s build something great together!</p>
+                <div className="flex flex-col sm:flex-row justify-center gap-6 items-center">
+                  <a href="https://www.instagram.com/samcoildocena/" target="_blank" rel="noopener noreferrer"
+                     className="px-6 py-3 bg-gray-800 rounded-lg text-gray-200 flex items-center justify-center gap-2 hover:bg-pink-600 hover:scale-110 transform transition w-44">
+                    <img src="https://cdn-icons-png.flaticon.com/512/174/174855.png" alt="Instagram logo" className="w-6 h-6" /> Instagram
+                  </a>
+                  <a href="https://www.linkedin.com/in/samcoil-docena-a7754618b/" target="_blank" rel="noopener noreferrer"
+                     className="px-6 py-3 bg-gray-800 rounded-lg text-gray-200 flex items-center justify-center gap-2 hover:bg-blue-600 hover:scale-110 transform transition w-44">
+                    <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn logo" className="w-6 h-6" /> LinkedIn
+                  </a>
+                  <a href="https://github.com/mas12205" target="_blank" rel="noopener noreferrer"
+                     className="px-6 py-3 bg-gray-800 rounded-lg text-gray-200 flex items-center justify-center gap-2 hover:bg-gray-700 hover:scale-110 transform transition w-44">
+                    <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" alt="GitHub logo" className="w-6 h-6" /> GitHub
+                  </a>
                 </div>
               </section>
             )}
           </main>
 
+          {/* Project Modal */}
+          {modalProject && (
+            <div className="fixed inset-0 flex items-center justify-center modal-bg z-20">
+              <div className="bg-gray-900 rounded-xl shadow-xl max-w-lg w-full p-6 relative overflow-y-auto max-h-[90vh]">
+                <button onClick={() => setModalProject(null)} 
+                        className="absolute top-2 right-2 text-white bg-red-500 hover:bg-red-600 rounded-full px-3 py-1">
+                  ✖
+                </button>
+                <img src={modalProject.img} alt={modalProject.title} className="rounded-lg mb-4" />
+                <h3 className="text-xl font-bold text-white mb-2">{modalProject.title}</h3>
+                <p className="text-gray-300 mb-3">{modalProject.desc}</p>
+                <p className="text-orange-400 font-semibold mb-4">Tech Stack: <span className="text-gray-300">{modalProject.tech}</span></p>
+                <div className="flex gap-4">
+                  <a href={modalProject.demo} target="_blank" className="px-4 py-2 bg-orange-500 rounded-lg hover:bg-orange-600">Live Demo</a>
+                  <a href={modalProject.github} target="_blank" className="px-4 py-2 bg-gray-700 rounded-lg hover:bg-gray-600">GitHub</a>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Resume Modal */}
+          {showResume && (
+            <div className="fixed inset-0 flex items-center justify-center modal-bg z-20">
+              <div className="bg-gray-900 rounded-xl shadow-xl max-w-3xl w-full h-[95vh] p-6 relative overflow-y-auto">
+                <button onClick={() => setShowResume(false)} 
+                        className="absolute top-2 right-2 text-white bg-red-500 hover:bg-red-600 rounded-full px-3 py-1">
+                  ✖
+                </button>
+                <h3 className="text-xl font-bold text-white mb-4">My Resume</h3>
+                <iframe src="./Resume(Docena).pdf" className="w-full h-[80vh] rounded-lg" />
+              </div>
+            </div>
+          )}
+
           {/* Footer */}
-          <footer className="text-center py-6 text-gray-500 text-sm bg-white mt-20 shadow-inner">
+          <footer className="text-center py-6 text-gray-500 text-sm bg-black/70 mt-20 shadow-inner z-10">
             © {new Date().getFullYear()} {profileInfo.name}. All rights reserved.
           </footer>
         </div>
@@ -90,6 +314,66 @@
     }
 
     ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+
+    /* Background Particles Animation */
+    const canvas = document.getElementById("bgCanvas");
+    const ctx = canvas.getContext("2d");
+    let particlesArray;
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      init();
+    });
+
+    class Particle {
+      constructor(x, y, size, speedX, speedY) {
+        this.x = x;
+        this.y = y;
+        this.size = size;
+        this.speedX = speedX;
+        this.speedY = speedY;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
+        if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
+      }
+      draw() {
+        ctx.fillStyle = "rgba(255,140,0,0.7)";
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function init() {
+      particlesArray = [];
+      for (let i = 0; i < 50; i++) {
+        const size = Math.random() * 3 + 1;
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        const speedX = (Math.random() - 0.5) * 1;
+        const speedY = (Math.random() - 0.5) * 1;
+        particlesArray.push(new Particle(x, y, size, speedX, speedY));
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particlesArray.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animate);
+    }
+
+    init();
+    animate();
   </script>
 </body>
 </html>
